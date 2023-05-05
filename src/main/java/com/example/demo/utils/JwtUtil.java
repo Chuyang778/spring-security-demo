@@ -27,7 +27,7 @@ public class JwtUtil {
     }
 
     /**
-     * 生成jtw  jwt加密
+     * 生成jwt jwt加密
      * @param subject token中要存放的数据（json格式）
      * @return
      */
@@ -61,9 +61,12 @@ public class JwtUtil {
     }
 
     private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis, String uuid) {
+        // 签名认证算法
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        // 生成密钥
         SecretKey secretKey = generalKey();
         long nowMillis = System.currentTimeMillis();
+        // 生成签发时间
         Date now = new Date(nowMillis);
         if(ttlMillis==null){
             ttlMillis=JwtUtil.JWT_TTL;

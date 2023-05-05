@@ -1,12 +1,16 @@
 package com.example.demo.Dao.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ChuYang
@@ -18,14 +22,27 @@ import java.util.Collection;
 public class LoginUser implements UserDetails {
 
     private User user;
+
+    public LoginUser(User user, List<String> permissions) {
+        this.user = user;
+        this.permissions = permissions;
+    }
+
+    private List<String> permissions;
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
+    @JSONField(serialize = false)
+    private List<SimpleGrantedAuthority> authorities;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if(authorities != null) return authorities;
+        authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return authorities;
     }
 
     @Override
